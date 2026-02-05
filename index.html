@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>For You ❤️</title>
+    <style>
+        /* Base Styles for Mobile Layout */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #fef2f2; /* Soft Pink */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Prevents scrolling when buttons get huge */
+        }
+
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        /* GIF Placeholder */
+        .gif-container img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Main Question */
+        h1 {
+            color: #db2777; /* Dark Pink */
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        /* Button Container */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px; /* Space between buttons */
+            position: relative; /* Needed for z-index layering */
+        }
+
+        /* Button Styles */
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease; /* Smooth growing animation */
+            font-weight: bold;
+        }
+
+        /* YES Button */
+        #yes-btn {
+            background-color: #22c55e; /* Green */
+            color: white;
+            z-index: 10; /* Ensures it sits ON TOP of the No button when it grows */
+        }
+
+        /* NO Button */
+        #no-btn {
+            background-color: #ef4444; /* Red */
+            color: white;
+        }
+
+        /* State for when Yes is clicked */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="gif-container">
+            <img id="gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpndnFmN2o1Z3p6am56am56am56am56am56am56am56am56/3OhXBaoR1tVPW/giphy.gif" alt="Cute Gif">
+        </div>
+
+        <h1 id="question">Will you be my girlfriend? 🌹</h1>
+
+        <div class="buttons">
+            <button id="yes-btn" onclick="handleYes()">Yes</button>
+            <button id="no-btn" onclick="handleNo()">No</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const question = document.getElementById('question');
+        const gif = document.getElementById('gif');
+
+        // Text messages for the No button
+        const noTexts = [
+            "Are you sure?", 
+            "Are you sure you are sure?", 
+            "You better say yes", 
+            "Bab pleeeeeeesse", 
+            "Please say yes baaaabe", 
+            "Don't do this to me 😭",
+            "I'm gonna cry...", 
+            "Last Chance!"
+        ];
+
+        let clickCount = 0;
+        let currentFontSize = 16; // Base font size
+        let currentPadding = 12;  // Base padding
+
+        // Function when NO is clicked
+        function handleNo() {
+            // 1. Change text on No button
+            if (clickCount < noTexts.length) {
+                noBtn.innerText = noTexts[clickCount];
+            } else {
+                noBtn.innerText = "💔"; // If they run out of text
+            }
+            clickCount++;
+
+            // 2. Make Yes button grow
+            currentFontSize += 15; // Increase font size significantly
+            currentPadding += 10;  // Increase padding
+            
+            yesBtn.style.fontSize = `${currentFontSize}px`;
+            yesBtn.style.padding = `${currentPadding}px ${currentPadding * 2}px`;
+
+            // 3. Optional: Make the No button text smaller slightly to fit the long phrases
+            noBtn.style.fontSize = "14px";
+        }
+
+        // Function when YES is clicked
+        function handleYes() {
+            // 1. Change the GIF to a kissing/happy one
+            // Using a specific cute cat/bear kiss GIF
+            gif.src = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpndnFmN2o1Z3p6am56am56am56am56am56am56am56am56/KzM1lAfJjCW3Ic7H5m/giphy.gif"; 
+
+            // 2. Change the text
+            question.innerText = "YAY!!! I knew it! Love you! ❤️😘";
+
+            // 3. Hide the buttons
+            yesBtn.style.display = 'none';
+            noBtn.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
