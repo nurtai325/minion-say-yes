@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>For You ❤️</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You ❤️</title>
     <style>
-        /* Base Styles for Mobile Layout */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #fef2f2; /* Soft Pink */
@@ -13,7 +13,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden; /* Prevents scrolling when buttons get huge */
+            overflow: hidden; /* Important: Hides scrollbars when button gets huge */
         }
 
         .container {
@@ -23,57 +23,62 @@
             position: relative;
         }
 
-        /* GIF Placeholder */
-        .gif-container img {
-            width: 100%;
-            max-width: 300px;
-            height: auto;
-            border-radius: 10px;
+        /* GIF Container */
+        .gif-container {
             margin-bottom: 20px;
         }
 
-        /* Main Question */
-        h1 {
-            color: #db2777; /* Dark Pink */
-            font-size: 24px;
-            margin-bottom: 30px;
+        .gif-container img {
+            width: 100%;
+            max-width: 250px; /* Kept it neat */
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        /* Button Container */
+        h1 {
+            color: #db2777;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* The Button Area */
         .buttons {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px; /* Space between buttons */
-            position: relative; /* Needed for z-index layering */
+            gap: 20px; /* Space between buttons */
+            position: relative;
+            height: 60px; /* Fix height to prevent jumping */
         }
 
-        /* Button Styles */
         button {
             padding: 12px 24px;
             font-size: 16px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease; /* Smooth growing animation */
             font-weight: bold;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+            position: relative;
         }
 
-        /* YES Button */
         #yes-btn {
-            background-color: #22c55e; /* Green */
+            background-color: #22c55e;
             color: white;
-            z-index: 10; /* Ensures it sits ON TOP of the No button when it grows */
+            z-index: 10; /* Ensures it covers the No button */
+            transform-origin: center; /* Grows from center */
         }
 
-        /* NO Button */
         #no-btn {
-            background-color: #ef4444; /* Red */
+            background-color: #ef4444;
             color: white;
+            z-index: 1;
+            /* Prevents the text from wrapping inside the button */
+            white-space: nowrap; 
         }
 
-        /* State for when Yes is clicked */
+        /* Hidden class for cleanup */
         .hidden {
             display: none;
         }
@@ -83,7 +88,7 @@
 
     <div class="container">
         <div class="gif-container">
-            <img id="gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpndnFmN2o1Z3p6am56am56am56am56am56am56am56am56/3OhXBaoR1tVPW/giphy.gif" alt="Cute Gif">
+            <img id="gif" src="https://media.giphy.com/media/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Minion Heart">
         </div>
 
         <h1 id="question">Will you be my girlfriend? 🌹</h1>
@@ -95,13 +100,11 @@
     </div>
 
     <script>
-        // Variables
         const yesBtn = document.getElementById('yes-btn');
         const noBtn = document.getElementById('no-btn');
         const question = document.getElementById('question');
         const gif = document.getElementById('gif');
 
-        // Text messages for the No button
         const noTexts = [
             "Are you sure?", 
             "Are you sure you are sure?", 
@@ -114,40 +117,32 @@
         ];
 
         let clickCount = 0;
-        let currentFontSize = 16; // Base font size
-        let currentPadding = 12;  // Base padding
+        let currentScale = 1;
 
-        // Function when NO is clicked
         function handleNo() {
             // 1. Change text on No button
             if (clickCount < noTexts.length) {
                 noBtn.innerText = noTexts[clickCount];
             } else {
-                noBtn.innerText = "💔"; // If they run out of text
+                noBtn.innerText = "💔";
             }
             clickCount++;
 
-            // 2. Make Yes button grow
-            currentFontSize += 15; // Increase font size significantly
-            currentPadding += 10;  // Increase padding
-            
-            yesBtn.style.fontSize = `${currentFontSize}px`;
-            yesBtn.style.padding = `${currentPadding}px ${currentPadding * 2}px`;
-
-            // 3. Optional: Make the No button text smaller slightly to fit the long phrases
-            noBtn.style.fontSize = "14px";
+            // 2. Increase the Scale of the Yes button
+            // This makes it visually grow over the top of the No button
+            // without pushing the No button down the page.
+            currentScale += 0.5; 
+            yesBtn.style.transform = `scale(${currentScale})`;
         }
 
-        // Function when YES is clicked
         function handleYes() {
-            // 1. Change the GIF to a kissing/happy one
-            // Using a specific cute cat/bear kiss GIF
-            gif.src = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpndnFmN2o1Z3p6am56am56am56am56am56am56am56am56/KzM1lAfJjCW3Ic7H5m/giphy.gif"; 
-
-            // 2. Change the text
+            // 1. Change to Fireworks GIF
+            gif.src = "https://media.giphy.com/media/26tOZ42Mg6pbTUPhw/giphy.gif";
+            
+            // 2. Change text
             question.innerText = "YAY!!! I knew it! Love you! ❤️😘";
 
-            // 3. Hide the buttons
+            // 3. Hide buttons
             yesBtn.style.display = 'none';
             noBtn.style.display = 'none';
         }
