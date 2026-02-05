@@ -41,13 +41,13 @@
             margin-bottom: 20px;
         }
 
-        /* Button container with absolute positioning */
         .buttons {
-            position: relative;
-            height: 150px; /* Increased to accommodate larger Yes button */
             display: flex;
             justify-content: center;
             align-items: center;
+            gap: 20px;
+            position: relative;
+            min-height: 60px;
         }
 
         button {
@@ -57,44 +57,21 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             white-space: nowrap;
         }
 
         #yes-btn {
             background-color: #22c55e;
             color: white;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%) scale(1);
             transform-origin: center;
-            z-index: 10;
-            /* Prevent text from getting too small on mobile */
-            min-font-size: 14px;
         }
 
         #no-btn {
             background-color: #ef4444;
             color: white;
             position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 1;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 400px) {
-            .buttons {
-                height: 120px;
-            }
-            
-            #no-btn {
-                right: 10px;
-                padding: 10px 20px;
-                font-size: 14px;
-            }
+            transition: all 0.2s ease;
         }
     </style>
 </head>
@@ -106,7 +83,7 @@
         <h1 id="question">Will you be my girlfriend? 🌹</h1>
         <div class="buttons">
             <button id="yes-btn" onclick="handleYes()">Yes</button>
-            <button id="no-btn" onclick="handleNo()">No</button>
+            <button id="no-btn" onmouseover="runAway()" ontouchstart="runAway()">No</button>
         </div>
     </div>
 
@@ -118,37 +95,46 @@
 
         const noTexts = [
             "Are you sure?",
-            "Are you sure you are sure?",
-            "You better say yes",
-            "Bab pleeeeeeesse",
-            "Please say yes baaaabe",
-            "Don't do this to me 😭",
-            "I'm gonna cry...",
-            "Last Chance!"
+            "Really?",
+            "Think again!",
+            "Last chance!",
+            "Surely not?",
+            "You might regret this!",
+            "Give it another thought!",
+            "Are you absolutely certain?",
+            "This could be a mistake!",
+            "Have a heart!"
         ];
 
-        let clickCount = 0;
-        let currentScale = 1;
+        let hoverCount = 0;
+        let yesScale = 1;
 
-        function handleNo() {
-            // Change text on No button
-            if (clickCount < noTexts.length) {
-                noBtn.innerText = noTexts[clickCount];
-            } else {
-                noBtn.innerText = "💔";
-            }
-            clickCount++;
-
-            // Yes button grows faster and more dramatically
-            currentScale += 0.8; // Increased from 0.5 to 0.8
-            
-            // Cap the scale to prevent going off-screen on mobile
-            const maxScale = window.innerWidth < 400 ? 4 : 5;
-            if (currentScale > maxScale) {
-                currentScale = maxScale;
+        function runAway() {
+            // Change the No button text
+            if (hoverCount < noTexts.length) {
+                noBtn.innerText = noTexts[hoverCount];
             }
             
-            yesBtn.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
+            // Make Yes button bigger (grows faster now)
+            yesScale += 0.3;
+            yesBtn.style.transform = `scale(${yesScale})`;
+            
+            // Move No button to a random position
+            const container = document.querySelector('.container');
+            const containerRect = container.getBoundingClientRect();
+            
+            // Calculate safe boundaries (keeping button visible on screen)
+            const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+            const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+            
+            const randomX = Math.random() * (maxX - 20) + 20;
+            const randomY = Math.random() * (maxY - 20) + 20;
+            
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            
+            hoverCount++;
         }
 
         function handleYes() {
