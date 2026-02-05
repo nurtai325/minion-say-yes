@@ -13,11 +13,11 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 100%);
+            background-color: #fef2f2;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             padding: 20px;
         }
 
@@ -40,48 +40,45 @@
         }
 
         h1 {
-            color: #d81b60;
+            color: #db2777;
             font-size: 28px;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             font-weight: bold;
         }
 
-        .button-wrapper {
+        .buttons-container {
             position: relative;
+            min-height: 300px;
             width: 100%;
-            height: 200px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         button {
             padding: 15px 40px;
             font-size: 18px;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
+            position: absolute;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
         }
 
         #yes-btn {
-            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            background-color: #22c55e;
             color: white;
-            z-index: 2;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
         }
 
         #no-btn {
-            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            background-color: #ef4444;
             color: white;
-            position: absolute;
-            z-index: 1;
+            left: 50%;
+            top: 50%;
+            transform: translate(80px, -50%);
+            z-index: 5;
         }
 
         @media (max-width: 600px) {
@@ -93,6 +90,10 @@
                 padding: 12px 30px;
                 font-size: 16px;
             }
+
+            .buttons-container {
+                min-height: 250px;
+            }
         }
     </style>
 </head>
@@ -102,8 +103,8 @@
             <img id="gif" src="https://media.giphy.com/media/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Cute">
         </div>
         <h1 id="question">Will you be my girlfriend? 🌹</h1>
-        <div class="button-wrapper">
-            <button id="yes-btn">Yes! ❤️</button>
+        <div class="buttons-container">
+            <button id="yes-btn">Yes</button>
             <button id="no-btn">No</button>
         </div>
     </div>
@@ -113,59 +114,40 @@
         const noBtn = document.getElementById('no-btn');
         const question = document.getElementById('question');
         const gif = document.getElementById('gif');
-        const wrapper = document.querySelector('.button-wrapper');
+        const container = document.querySelector('.buttons-container');
 
-        const noMessages = [
+        const noTexts = [
             "No",
             "Are you sure?",
-            "Really sure?",
-            "Think again!",
+            "Really?",
+            "Think again",
             "Last chance!",
-            "Are you certain?",
-            "Don't do this!",
-            "I'm gonna cry",
-            "Please reconsider",
-            "Noooo 😢"
+            "You sure?",
+            "Reconsider!",
+            "Don't!",
+            "Please!",
+            "💔"
         ];
 
-        let noCount = 0;
-        let yesSize = 1;
+        let noIndex = 0;
+        let yesScale = 1;
 
-        // Position No button initially to the right
-        function positionNoButton() {
-            const wrapperRect = wrapper.getBoundingClientRect();
-            const yesBtnRect = yesBtn.getBoundingClientRect();
-            
-            noBtn.style.left = (yesBtnRect.right - wrapperRect.left + 20) + 'px';
-            noBtn.style.top = '50%';
-            noBtn.style.transform = 'translateY(-50%)';
-        }
+        // Make No button run away on mouseover
+        noBtn.addEventListener('mouseover', function() {
+            // Grow Yes button significantly
+            yesScale += 0.5;
+            yesBtn.style.transform = `translate(-50%, -50%) scale(${yesScale})`;
 
-        positionNoButton();
-
-        // Make No button run away on hover/touch
-        noBtn.addEventListener('mouseover', moveNoButton);
-        noBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            moveNoButton();
-        });
-
-        function moveNoButton() {
-            noCount++;
-            
-            // Update text
-            if (noCount < noMessages.length) {
-                noBtn.textContent = noMessages[noCount];
-            }
-
-            // Grow Yes button
-            yesSize += 0.2;
-            yesBtn.style.transform = `scale(${yesSize})`;
+            // Change No button text
+            noIndex = Math.min(noIndex + 1, noTexts.length - 1);
+            noBtn.textContent = noTexts[noIndex];
 
             // Move No button to random position
-            const wrapperRect = wrapper.getBoundingClientRect();
-            const maxX = wrapperRect.width - noBtn.offsetWidth;
-            const maxY = wrapperRect.height - noBtn.offsetHeight;
+            const containerRect = container.getBoundingClientRect();
+            const noBtnRect = noBtn.getBoundingClientRect();
+            
+            const maxX = containerRect.width - noBtnRect.width;
+            const maxY = containerRect.height - noBtnRect.height;
 
             const randomX = Math.random() * maxX;
             const randomY = Math.random() * maxY;
@@ -173,10 +155,37 @@
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
             noBtn.style.transform = 'none';
-        }
+        });
+
+        // Mobile touch support
+        noBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            
+            // Grow Yes button
+            yesScale += 0.5;
+            yesBtn.style.transform = `translate(-50%, -50%) scale(${yesScale})`;
+
+            // Change text
+            noIndex = Math.min(noIndex + 1, noTexts.length - 1);
+            noBtn.textContent = noTexts[noIndex];
+
+            // Move to random position
+            const containerRect = container.getBoundingClientRect();
+            const noBtnRect = noBtn.getBoundingClientRect();
+            
+            const maxX = containerRect.width - noBtnRect.width;
+            const maxY = containerRect.height - noBtnRect.height;
+
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            noBtn.style.transform = 'none';
+        });
 
         // Yes button click
-        yesBtn.addEventListener('click', () => {
+        yesBtn.addEventListener('click', function() {
             gif.src = "https://media.giphy.com/media/26tOZ42Mg6pbTUPhw/giphy.gif";
             question.textContent = "YAY!!! I knew it! Love you! ❤️😘";
             
