@@ -7,13 +7,13 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #fef2f2; /* Soft Pink */
+            background-color: #fef2f2;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden; /* Important: Hides scrollbars when button gets huge */
+            overflow: hidden;
         }
 
         .container {
@@ -23,14 +23,13 @@
             position: relative;
         }
 
-        /* GIF Container */
         .gif-container {
             margin-bottom: 20px;
         }
 
         .gif-container img {
             width: 100%;
-            max-width: 250px; /* Kept it neat */
+            max-width: 250px;
             height: auto;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -42,14 +41,13 @@
             margin-bottom: 20px;
         }
 
-        /* The Button Area */
+        /* Button container with absolute positioning */
         .buttons {
+            position: relative;
+            height: 150px; /* Increased to accommodate larger Yes button */
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px; /* Space between buttons */
-            position: relative;
-            height: 60px; /* Fix height to prevent jumping */
         }
 
         button {
@@ -59,40 +57,53 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
-            position: relative;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            white-space: nowrap;
         }
 
         #yes-btn {
             background-color: #22c55e;
             color: white;
-            z-index: 10; /* Ensures it covers the No button */
-            transform-origin: center; /* Grows from center */
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            transform-origin: center;
+            z-index: 10;
+            /* Prevent text from getting too small on mobile */
+            min-font-size: 14px;
         }
 
         #no-btn {
             background-color: #ef4444;
             color: white;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
             z-index: 1;
-            /* Prevents the text from wrapping inside the button */
-            white-space: nowrap; 
         }
 
-        /* Hidden class for cleanup */
-        .hidden {
-            display: none;
+        /* Responsive adjustments */
+        @media (max-width: 400px) {
+            .buttons {
+                height: 120px;
+            }
+            
+            #no-btn {
+                right: 10px;
+                padding: 10px 20px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
-
     <div class="container">
         <div class="gif-container">
             <img id="gif" src="https://media.giphy.com/media/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Minion Heart">
         </div>
-
         <h1 id="question">Will you be my girlfriend? 🌹</h1>
-
         <div class="buttons">
             <button id="yes-btn" onclick="handleYes()">Yes</button>
             <button id="no-btn" onclick="handleNo()">No</button>
@@ -106,13 +117,13 @@
         const gif = document.getElementById('gif');
 
         const noTexts = [
-            "Are you sure?", 
-            "Are you sure you are sure?", 
-            "You better say yes", 
-            "Bab pleeeeeeesse", 
-            "Please say yes baaaabe", 
+            "Are you sure?",
+            "Are you sure you are sure?",
+            "You better say yes",
+            "Bab pleeeeeeesse",
+            "Please say yes baaaabe",
             "Don't do this to me 😭",
-            "I'm gonna cry...", 
+            "I'm gonna cry...",
             "Last Chance!"
         ];
 
@@ -120,7 +131,7 @@
         let currentScale = 1;
 
         function handleNo() {
-            // 1. Change text on No button
+            // Change text on No button
             if (clickCount < noTexts.length) {
                 noBtn.innerText = noTexts[clickCount];
             } else {
@@ -128,21 +139,26 @@
             }
             clickCount++;
 
-            // 2. Increase the Scale of the Yes button
-            // This makes it visually grow over the top of the No button
-            // without pushing the No button down the page.
-            currentScale += 0.5; 
-            yesBtn.style.transform = `scale(${currentScale})`;
+            // Yes button grows faster and more dramatically
+            currentScale += 0.8; // Increased from 0.5 to 0.8
+            
+            // Cap the scale to prevent going off-screen on mobile
+            const maxScale = window.innerWidth < 400 ? 4 : 5;
+            if (currentScale > maxScale) {
+                currentScale = maxScale;
+            }
+            
+            yesBtn.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
         }
 
         function handleYes() {
-            // 1. Change to Fireworks GIF
+            // Change to Fireworks GIF
             gif.src = "https://media.giphy.com/media/26tOZ42Mg6pbTUPhw/giphy.gif";
             
-            // 2. Change text
+            // Change text
             question.innerText = "YAY!!! I knew it! Love you! ❤️😘";
-
-            // 3. Hide buttons
+            
+            // Hide buttons
             yesBtn.style.display = 'none';
             noBtn.style.display = 'none';
         }
