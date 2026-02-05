@@ -5,107 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For You ❤️</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #fef2f2;
-            min-height: 100vh;
+            background-color: #fef2f2; /* Soft Pink */
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Important: Hides scrollbars when button gets huge */
         }
 
         .container {
             text-align: center;
-            max-width: 500px;
-            width: 100%;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
         }
 
+        /* GIF Container */
         .gif-container {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .gif-container img {
             width: 100%;
-            max-width: 300px;
+            max-width: 250px; /* Kept it neat */
             height: auto;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         h1 {
             color: #db2777;
-            font-size: 28px;
-            margin-bottom: 50px;
-            font-weight: bold;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
 
-        .buttons-container {
+        /* The Button Area */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px; /* Space between buttons */
             position: relative;
-            min-height: 300px;
-            width: 100%;
+            height: 60px; /* Fix height to prevent jumping */
         }
 
         button {
-            padding: 15px 40px;
-            font-size: 18px;
+            padding: 12px 24px;
+            font-size: 16px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            position: absolute;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+            position: relative;
         }
 
         #yes-btn {
             background-color: #22c55e;
             color: white;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
+            z-index: 10; /* Ensures it covers the No button */
+            transform-origin: center; /* Grows from center */
         }
 
         #no-btn {
             background-color: #ef4444;
             color: white;
-            left: 50%;
-            top: 50%;
-            transform: translate(80px, -50%);
-            z-index: 5;
+            z-index: 1;
+            /* Prevents the text from wrapping inside the button */
+            white-space: nowrap; 
         }
 
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 24px;
-            }
-            
-            button {
-                padding: 12px 30px;
-                font-size: 16px;
-            }
-
-            .buttons-container {
-                min-height: 250px;
-            }
+        /* Hidden class for cleanup */
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
         <div class="gif-container">
-            <img id="gif" src="https://media.giphy.com/media/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Cute">
+            <img id="gif" src="https://media.giphy.com/media/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Minion Heart">
         </div>
+
         <h1 id="question">Will you be my girlfriend? 🌹</h1>
-        <div class="buttons-container">
-            <button id="yes-btn">Yes</button>
-            <button id="no-btn">No</button>
+
+        <div class="buttons">
+            <button id="yes-btn" onclick="handleYes()">Yes</button>
+            <button id="no-btn" onclick="handleNo()">No</button>
         </div>
     </div>
 
@@ -114,84 +104,48 @@
         const noBtn = document.getElementById('no-btn');
         const question = document.getElementById('question');
         const gif = document.getElementById('gif');
-        const container = document.querySelector('.buttons-container');
 
         const noTexts = [
-            "No",
-            "Are you sure?",
-            "Really?",
-            "Think again",
-            "Last chance!",
-            "You sure?",
-            "Reconsider!",
-            "Don't!",
-            "Please!",
-            "💔"
+            "Are you sure?", 
+            "Are you sure you are sure?", 
+            "You better say yes", 
+            "Bab pleeeeeeesse", 
+            "Please say yes baaaabe", 
+            "Don't do this to me 😭",
+            "I'm gonna cry...", 
+            "Last Chance!"
         ];
 
-        let noIndex = 0;
-        let yesScale = 1;
+        let clickCount = 0;
+        let currentScale = 1;
 
-        // Make No button run away on mouseover
-        noBtn.addEventListener('mouseover', function() {
-            // Grow Yes button significantly
-            yesScale += 0.5;
-            yesBtn.style.transform = `translate(-50%, -50%) scale(${yesScale})`;
+        function handleNo() {
+            // 1. Change text on No button
+            if (clickCount < noTexts.length) {
+                noBtn.innerText = noTexts[clickCount];
+            } else {
+                noBtn.innerText = "💔";
+            }
+            clickCount++;
 
-            // Change No button text
-            noIndex = Math.min(noIndex + 1, noTexts.length - 1);
-            noBtn.textContent = noTexts[noIndex];
+            // 2. Increase the Scale of the Yes button
+            // This makes it visually grow over the top of the No button
+            // without pushing the No button down the page.
+            currentScale += 0.5; 
+            yesBtn.style.transform = `scale(${currentScale})`;
+        }
 
-            // Move No button to random position
-            const containerRect = container.getBoundingClientRect();
-            const noBtnRect = noBtn.getBoundingClientRect();
-            
-            const maxX = containerRect.width - noBtnRect.width;
-            const maxY = containerRect.height - noBtnRect.height;
-
-            const randomX = Math.random() * maxX;
-            const randomY = Math.random() * maxY;
-
-            noBtn.style.left = randomX + 'px';
-            noBtn.style.top = randomY + 'px';
-            noBtn.style.transform = 'none';
-        });
-
-        // Mobile touch support
-        noBtn.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            
-            // Grow Yes button
-            yesScale += 0.5;
-            yesBtn.style.transform = `translate(-50%, -50%) scale(${yesScale})`;
-
-            // Change text
-            noIndex = Math.min(noIndex + 1, noTexts.length - 1);
-            noBtn.textContent = noTexts[noIndex];
-
-            // Move to random position
-            const containerRect = container.getBoundingClientRect();
-            const noBtnRect = noBtn.getBoundingClientRect();
-            
-            const maxX = containerRect.width - noBtnRect.width;
-            const maxY = containerRect.height - noBtnRect.height;
-
-            const randomX = Math.random() * maxX;
-            const randomY = Math.random() * maxY;
-
-            noBtn.style.left = randomX + 'px';
-            noBtn.style.top = randomY + 'px';
-            noBtn.style.transform = 'none';
-        });
-
-        // Yes button click
-        yesBtn.addEventListener('click', function() {
+        function handleYes() {
+            // 1. Change to Fireworks GIF
             gif.src = "https://media.giphy.com/media/26tOZ42Mg6pbTUPhw/giphy.gif";
-            question.textContent = "YAY!!! I knew it! Love you! ❤️😘";
             
+            // 2. Change text
+            question.innerText = "YAY!!! I knew it! Love you! ❤️😘";
+
+            // 3. Hide buttons
             yesBtn.style.display = 'none';
             noBtn.style.display = 'none';
-        });
+        }
     </script>
 </body>
 </html>
