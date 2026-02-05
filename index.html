@@ -54,13 +54,14 @@
 
         button {
             padding: 12px 24px;
-            font-size: 16px;
+            font-size: 12px; /* REDUCED from 16px to 12px */
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
             position: relative;
+            min-width: 60px; /* Minimum width to keep button size consistent */
         }
 
         #yes-btn {
@@ -107,20 +108,20 @@
 
         const noTexts = [
             "Are you sure?", 
-            "Are you sure you are sure?", 
-            "You better say yes", 
-            "Bab pleeeeeeesse", 
-            "Please say yes baaaabe", 
-            "Don't do this to me 😭",
-            "I'm gonna cry...", 
-            "Last Chance!"
+            "Really?", 
+            "Think again", 
+            "Pleeease", 
+            "Come on babe", 
+            "Don't do this 😭",
+            "I'm gonna cry", 
+            "Last chance!"
         ];
 
         let clickCount = 0;
         let currentScale = 1;
 
         function handleNo() {
-            // 1. Change text on No button
+            // 1. Change text on No button (keeping it short to minimize size changes)
             if (clickCount < noTexts.length) {
                 noBtn.innerText = noTexts[clickCount];
             } else {
@@ -128,10 +129,9 @@
             }
             clickCount++;
 
-            // 2. Increase the Scale of the Yes button
-            // This makes it visually grow over the top of the No button
-            // without pushing the No button down the page.
-            currentScale += 0.5; 
+            // 2. Increase the Scale of the Yes button FASTER (was 0.5, now 0.8)
+            // This makes it grow quickly and displace/cover the No button
+            currentScale += 0.8; 
             yesBtn.style.transform = `scale(${currentScale})`;
         }
 
@@ -149,4 +149,3 @@
     </script>
 </body>
 </html>
-
